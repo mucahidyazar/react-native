@@ -11,8 +11,11 @@ import {
 } from "react-native";
 import Card from "../../views/components/Card";
 import colors from "../../constants/colors";
-import Input from "../../views/components/Input/idnex";
+import Input from "../../views/components/Input";
+import BodyText from "../../views/components/BodyText";
 import NumberContainer from "../../views/components/Number";
+import TitleText from "../../views/components/TitleText";
+import MainButton from "../../views/components/MainButton";
 
 const StartGameScreen = ({ onStartGame }) => {
   const [enteredValue, setEnteredValue] = useState("");
@@ -51,10 +54,9 @@ const StartGameScreen = ({ onStartGame }) => {
       <Card style={styles.summaryContainer}>
         <Text>You selected</Text>
         <NumberContainer>{selectedNumber}</NumberContainer>
-        <Button
-          title="START GAME"
-          onPress={() => onStartGame(selectedNumber)}
-        />
+        <MainButton onPress={() => onStartGame(selectedNumber)}>
+          START GAME
+        </MainButton>
       </Card>
     );
   }
@@ -66,9 +68,9 @@ const StartGameScreen = ({ onStartGame }) => {
       }}
     >
       <View style={styles.screen}>
-        <Text style={styles.title}>Start New Game</Text>
+        <TitleText style={styles.title}>Start New Game</TitleText>
         <Card style={styles.inputContainer}>
-          <Text>Select a Number</Text>
+          <BodyText>Select a Number</BodyText>
           <Input
             style={styles.input}
             blurOnSubmit
