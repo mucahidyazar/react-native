@@ -6,6 +6,7 @@ import { enableScreens } from "react-native-screens";
 import ShopNavigator from "./src/navigations/ShopNavigator";
 import { Provider } from "react-redux";
 import store from "./src/store";
+import NavigationContainer from "./src/navigations/NavigationContainer";
 
 enableScreens();
 
@@ -29,7 +30,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <ShopNavigator />
+      <NavigationContainer />
     </Provider>
   );
 }

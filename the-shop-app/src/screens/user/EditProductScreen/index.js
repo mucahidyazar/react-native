@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer } from "react";
+import React, { useEffect, useCallback, useReducer, useState } from "react";
 import {
   StyleSheet,
   ScrollView,
@@ -9,8 +9,10 @@ import {
   Alert,
   KeyboardAvoidingView,
 } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
+import colors from "../../../constants/colors";
 import { createProduct, updateProduct } from "../../../store/actions";
 import HeaderButton from "../../../views/ui/HeaderButton";
 import Input from "../../../views/ui/Input";
@@ -41,6 +43,9 @@ const formReducer = (state, action) => {
 };
 
 const EditProductScreen = ({ navigation }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+
   const prodId = navigation.getParam("productId");
   const editedProduct = useSelector((state) =>
     state.products.userProducts.find((prod) => prod.id === prodId)
@@ -63,35 +68,49 @@ const EditProductScreen = ({ navigation }) => {
     formIsValid: editedProduct ? true : false,
   });
 
-  const submitHandler = useCallback(() => {
-    console.log(formState);
+  const submitHandler = useCallback(async () => {
     if (!formState.formIsValid) {
       Alert.alert("Wrong input!", "Please check the errors in the form.", [
         { text: "Okay" },
       ]);
       return;
     }
-    if (editedProduct) {
-      dispatch(
-        updateProduct(
-          prodId,
-          formState.inputValues.title,
-          formState.inputValues.description,
-          formState.inputValues.imageUrl
-        )
-      );
-    } else {
-      dispatch(
-        createProduct(
-          formState.inputValues.title,
-          formState.inputValues.description,
-          formState.inputValues.imageUrl,
-          +formState.inputValues.price
-        )
-      );
+    setError(null);
+    setIsLoading(true);
+    try {
+      if (editedProduct) {
+        await dispatch(
+          updateProduct(
+            prodId,
+            formState.inputValues.title,
+            formState.inputValues.description,
+            formState.inputValues.imageUrl
+          )
+        );
+      } else {
+        await dispatch(
+          createProduct(
+            formState.inputValues.title,
+            formState.inputValues.description,
+            formState.inputValues.imageUrl,
+            +formState.inputValues.price
+          )
+        );
+      }
+      navigation.goBack();
+    } catch (error) {
+      setError("The is some error!");
     }
-    navigation.goBack();
+    setIsLoading(false);
   }, [dispatch, prodId, formState]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert("An error occured", "Tehre is an error. Please check it.", [
+        { text: "Okey" },
+      ]);
+    }
+  }, [error]);
 
   useEffect(() => {
     navigation.setParams({ submit: submitHandler });
@@ -108,6 +127,14 @@ const EditProductScreen = ({ navigation }) => {
     },
     [dispatchFormState]
   );
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -143,17 +170,18 @@ const EditProductScreen = ({ navigation }) => {
             initiallyValid={!!editedProduct}
             required
           />
-          <Input
-            id="price"
-            label="Price"
-            errorText="Please enter a valid price"
-            keyboardType="decimal-pad"
-            autoCapitalize="sentences"
-            returnKeyType="next"
-            onInputChange={inputChangeHandler}
-            required
-            min={0}
-          />
+          {editedProduct ? null : (
+            <Input
+              id="price"
+              label="Price"
+              errorText="Please enter a valid price!"
+              keyboardType="decimal-pad"
+              returnKeyType="next"
+              onInputChange={inputChangeHandler}
+              required
+              min={0.1}
+            />
+          )}
           <Input
             id="description"
             label="Description"
@@ -203,5 +231,10 @@ export default EditProductScreen;
 const styles = StyleSheet.create({
   form: {
     margin: 20,
+  },
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

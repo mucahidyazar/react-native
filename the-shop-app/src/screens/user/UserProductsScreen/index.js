@@ -1,3 +1,4 @@
+import Axios from "axios";
 import React from "react";
 import {
   StyleSheet,
@@ -14,6 +15,14 @@ import colors from "../../../constants/colors";
 import { deleteProduct } from "../../../store/actions";
 import ProductItem from "../../../views/components/Shop/ProductItem";
 import HeaderButton from "../../../views/ui/HeaderButton";
+
+// const fetchP = async () => {
+//   const { data } = await Axios.get(
+//     "https://the-shop-app-c0a9a.firebaseio.com/products.json"
+//   );
+//   console.log(typeof data);
+// };
+// fetchP();
 
 const UserProductsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -41,6 +50,14 @@ const UserProductsScreen = ({ navigation }) => {
       },
     ]);
   };
+
+  if (userProducts.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>No products found. Maybe start creating some!</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
