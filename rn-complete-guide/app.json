@@ -1,23 +1,39 @@
 {
   "expo": {
-    "name": "rn-complete-guide",
-    "slug": "rn-complete-guide",
+    "name": "Great Places",
+    "slug": "great-places",
+    "description": "This is a great app. You can take screenshot.",
+    "privacy": "public",
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/places.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash_icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#171717"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
+      "bundleIdentifier": "com.academind.great-places",
+      "config": {
+        "googleMapsApiKey": "DENEMEAPIKEY"
+      },
+      "buildNumber": "1.0.0",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.academind.great_places",
+      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "DENEMEAPIKEY"
+        }
+      },
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
