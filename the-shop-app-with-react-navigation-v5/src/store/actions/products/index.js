@@ -1,4 +1,6 @@
 import axios from "axios";
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
 import { guidGenerator } from "../../../helper/randomId";
 import Product from "../../../models/product";
 import {
@@ -23,6 +25,7 @@ export const fetchProducts = () => {
           new Product(
             key,
             data[key].ownerId,
+            data[key].ownerPushToken,
             data[key].title,
             data[key].imageUrl,
             data[key].description,
@@ -57,6 +60,17 @@ export const deleteProduct = (productId) => {
 export const createProduct = (title, description, imageUrl, price) => {
   //!reduxt-thunk getState ile bize tum reducerslari dondurur
   return async (dispatch, getState) => {
+    let pushToken;
+    let response = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    if (response.status !== "granted") {
+      response = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    }
+    if (response.status !== "granted") {
+      pushToken = null;
+    } else {
+      pushToken = (await Notifications.getExpoPushTokenAsync()).data;
+    }
+
     const token = getState().auth.token;
     const userId = getState().auth.userId;
     // any async code you want
@@ -69,6 +83,7 @@ export const createProduct = (title, description, imageUrl, price) => {
         imageUrl,
         price,
         ownerId: userId,
+        ownerPushToken: pushToken,
       }
     );
     dispatch({
@@ -80,6 +95,7 @@ export const createProduct = (title, description, imageUrl, price) => {
         imageUrl,
         price,
         ownerId: userId,
+        pushToken,
       },
     });
   };

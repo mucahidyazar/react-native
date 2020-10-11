@@ -7,6 +7,15 @@ import ShopNavigator from "./src/navigations/ShopNavigator";
 import { Provider } from "react-redux";
 import store from "./src/store";
 import AppNavigator from "./src/navigations/AppNavigator";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+    };
+  },
+});
 
 enableScreens();
 

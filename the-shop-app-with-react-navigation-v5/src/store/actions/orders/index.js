@@ -59,5 +59,14 @@ export const addOrder = (cartItems, totalAmount) => {
         date: date,
       },
     });
+
+    for (const cartItem of cartItems) {
+      const pushToken = cartItem.productPushToken;
+      axios.post("https://exp.host/--/api/v2/push/send", {
+        to: pushToken,
+        title: "Order was placed!",
+        body: cartItem.productTitle,
+      });
+    }
   };
 };
